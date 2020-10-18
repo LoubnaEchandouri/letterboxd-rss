@@ -15,35 +15,29 @@ s = session()
 
 def process(args):
 
-    watchlist_url = args.letterboxd_url.rstrip("/")
-    if not watchlist_url.startswith("https://"):
-        watchlist_url = f"{base_url}{watchlist_url}"
-    if not watchlist_url.endswith("watchlist"):
-        watchlist_url += "/watchlist"
-    watchlist_url += "/"
+    watched_list_url = args.letterboxd_url.rstrip("/")
+    if not watched_list_url.startswith("https://"):
+        watched_list_url = f"{base_url}{watched_list_url}"
+    if not watched_list_url.endswith("films"):
+        watched_list_url += "/films"
+    watched_list_url += "/"
 
     feedlen = args.max_length
     output_file = args.output
-    page_title = "The Dude's Watchlist"
+    page_title = "The Dude's Watched List"
 
     feed = FeedGenerator()
     feed.title(page_title)
-    feed.id(watchlist_url)
-    feed.link(href=watchlist_url, rel="alternate")
+    feed.id(watched_list_url)
+    feed.link(href=watched_list_url, rel="alternate")
     feed.description(page_title + " from Letterboxd")
 
     # Get first page, gather general data
-    r = s.get(watchlist_url)
+    r = s.get(watched_list_url)
     soup = BeautifulSoup(r.text, "html.parser")
 
-    watchlist_title = soup.find("meta", attrs={"property": "og:title"})
-    page_title = watchlist_title.attrs["content"]
-
-    m = soup.find(text=MATCH_TOTAL_MOVIES)
-    if len(m) > 0:
-        total_movies = MATCH_TOTAL_MOVIES.search(m).group(1)
-        total_movies = int(total_movies)
-        print(f"Found a total of {total_movies} movies")
+    watched_list_title = soup.find("meta", attrs={"property": "og:title"})
+    page_title = watched_list_title.attrs["content"]
 
     last_page = soup.find_all("li", attrs={"class": "paginate-page"})[-1].text
     last_page = int(last_page)
@@ -51,7 +45,7 @@ def process(args):
     movies_added = 0
     for page in range(1, last_page):
         if page > 1:
-            r = s.get(watchlist_url + "/page/%i/" % page)
+            r = s.get(watched_list_url + "/page/%i/" % page)
             soup = BeautifulSoup(r.text, "html.parser")
             print()
 

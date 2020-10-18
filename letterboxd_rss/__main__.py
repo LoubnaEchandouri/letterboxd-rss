@@ -1,6 +1,6 @@
 import sys
 import argparse
-from letterboxd_rss import process
+from __init__ import process
 
 
 def main(argv=None):
@@ -21,9 +21,9 @@ def main(argv=None):
         "-l",
         "--max-length",
         metavar="FEED_LENGTH",
-        default=20,
+        default=1000,
         type=int,
-        help="Maximum number of watchlist items to keep in the feed",
+        help="Maximum number of watched items to keep in the feed",
     )
     args = parser.parse_args(argv)
     process(args)
